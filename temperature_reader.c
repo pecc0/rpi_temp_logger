@@ -9,7 +9,7 @@
 #define DHTPIN		7
 int dht11_dat[5] = { 0, 0, 0, 0, 0 };
  
-void read_dht11_dat()
+int read_dht11_dat(float& temperature, float& humidity)
 {
 	uint8_t laststate	= HIGH;
 	uint8_t counter		= 0;
@@ -60,8 +60,12 @@ void read_dht11_dat()
 			
 		//printf( "Humidity = %d.%d %% Temperature = %d.%d C (%.1f F)\n",
 		//	dht11_dat[0], dht11_dat[1], dht11_dat[2], dht11_dat[3], f );
+		temperature = dht11_dat[2];
+		humidity = dht11_dat[0];
+		return 1;
 	}else  {
-		syslog(LOG_INFO, "Data not good, skip" );
+		//syslog(LOG_INFO, "Data not good, skip" );
+		return 0;
 	}
 }
  
@@ -69,14 +73,20 @@ int main( void )
 {
 	openlog("termometer", LOG_PID|LOG_CONS, LOG_USER);
 	
-	syslog(LOG_INFO, "Termometer start" );
+	//syslog(LOG_INFO, "Termometer start" );
  
 	if ( wiringPiSetup() == -1 )
 		exit( 1 );
  
 	while ( 1 )
 	{
-		read_dht11_dat();
+		float temperature;
+		float humidity;
+		if (read_dht11_dat(temperature, humidity))
+		{
+			printf("%.1f;%.1f", temperature, humidity);
+			break;
+		}
 		delay( 1000 ); 
 	}
  
