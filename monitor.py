@@ -66,7 +66,7 @@ def get_temp(temp_reader_path):
 def main():
 
     while True:
-        resp = get_temp('~/temp_logger/temperature_reader')
+        resp = get_temp('temperature_reader')
         if resp:
             temperature, humidity = resp
 
