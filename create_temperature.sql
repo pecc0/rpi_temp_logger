@@ -1,4 +1,4 @@
-CREATE DATABASE temperatures;
+CREATE DATABASE IF NOT EXISTS temperatures;
 
 USE temperatures;
 
