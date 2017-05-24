@@ -25,7 +25,7 @@ def log_temperature(temp, humidity):
 
     curs = db.cursor()
 
-    curs.execute("INSERT INTO temps values(?, ?)", (temp, humidity))
+    curs.execute("INSERT INTO temps values(%f, %f)", (temp, humidity))
 
     # commit the changes
     conn.commit()
@@ -51,16 +51,11 @@ def display_data():
 # returns None on error, or the temperature, humidity as a float
 def get_temp(temp_reader_path):
 
-    try:
-        result = subprocess.check_output([temp_reader_path])
-        print "Result " + result
-        temp, humidity = result.split(";")
+    result = subprocess.check_output([temp_reader_path])
+    print "Result " + result
+    temp, humidity = result.split(";")
 
-        return float(temp), float(humidity)
-    except:
-        e = sys.exc_info()[0]
-        print "Error: %s" % e
-        return None
+    return float(temp), float(humidity)
 
 
 def main():
