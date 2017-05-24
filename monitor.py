@@ -4,6 +4,7 @@ import MySQLdb
 
 import os
 import time
+import sys
 import glob
 import subprocess
 
@@ -52,10 +53,13 @@ def get_temp(temp_reader_path):
 
     try:
         result = subprocess.check_output([temp_reader_path])
+        print "Result " + result
         temp, humidity = result.split(";")
 
         return float(temp), float(humidity)
     except:
+        e = sys.exc_info()[0]
+        print "Error: %s" % e
         return None
 
 
