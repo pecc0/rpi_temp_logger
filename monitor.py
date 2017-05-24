@@ -24,11 +24,12 @@ def log_temperature(temp, humidity):
     db = connect()
 
     curs = db.cursor()
+    data = (temp, humidity)
 
-    curs.execute("INSERT INTO temps values(%f, %f)", (temp, humidity))
+    curs.execute("INSERT INTO temps values (CURRENT_TIMESTAMP, %s, %s)", data)
 
     # commit the changes
-    conn.commit()
+    db.commit()
 
     db.close()
 
