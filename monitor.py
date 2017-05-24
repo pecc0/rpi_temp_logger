@@ -8,8 +8,8 @@ import glob
 import subprocess
 
 # global variables
-speriod=(15*60)-1
-
+#speriod=(15*60)-1
+speriod=1
 
 def connect():
     return MySQLdb.connect(host="localhost",    # your host, usually localhost
@@ -44,12 +44,12 @@ def display_data():
     db.close()
 
 
-# get temerature
-# returns None on error, or the temperature as a float
-def get_temp():
+# get temperature
+# returns None on error, or the temperature, humidity as a float
+def get_temp(temp_reader_path):
 
     try:
-        result = subprocess.check_output(['~/temp_logger/temperature_reader'])
+        result = subprocess.check_output([temp_reader_path])
         temp, humidity = result.split(";")
 
         return float(temp), float(humidity)
@@ -57,23 +57,21 @@ def get_temp():
         return None
 
 
-# main function
-# This is where the program starts 
 def main():
 
     while True:
-        # get the temperature from the device file
-        temperature, humidity = get_temp()
+        resp = get_temp('~/temp_logger/temperature_reader')
+        if resp:
+            temperature, humidity = resp
 
-        print "t=" + str(temperature) + " h=" + str(humidity)
+            print "t=" + str(temperature) + " h=" + str(humidity)
 
-        # Store the temperature in the database
-        log_temperature(temperature, humidity)
+            log_temperature(temperature, humidity)
 
         time.sleep(speriod)
 
 
-if __name__=="__main__":
+if __name__ == "__main__":
     main()
 
 

@@ -60,8 +60,8 @@ int read_dht11_dat(float* temperature, float* humidity)
 			
 		//printf( "Humidity = %d.%d %% Temperature = %d.%d C (%.1f F)\n",
 		//	dht11_dat[0], dht11_dat[1], dht11_dat[2], dht11_dat[3], f );
-		temperature = dht11_dat[2];
-		humidity = dht11_dat[0];
+		*temperature = dht11_dat[2];
+		*humidity = dht11_dat[0];
 		return 1;
 	}else  {
 		//syslog(LOG_INFO, "Data not good, skip" );
