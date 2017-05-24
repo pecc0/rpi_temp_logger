@@ -4,6 +4,7 @@ USE temperatures;
 
 DROP TABLE IF EXISTS temps;
 CREATE TABLE temps (
-	measure_time TIMESTAMP,
-	temperature FLOAT
+	measure_time DATETIME NOT NULL DEFAULT NOW(),
+	temperature FLOAT,
+	humidity FLOAT
 )

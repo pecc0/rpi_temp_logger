@@ -9,7 +9,7 @@
 #define DHTPIN		7
 int dht11_dat[5] = { 0, 0, 0, 0, 0 };
  
-int read_dht11_dat(float& temperature, float& humidity)
+int read_dht11_dat(float* temperature, float* humidity)
 {
 	uint8_t laststate	= HIGH;
 	uint8_t counter		= 0;
@@ -82,7 +82,7 @@ int main( void )
 	{
 		float temperature;
 		float humidity;
-		if (read_dht11_dat(temperature, humidity))
+		if (read_dht11_dat(&temperature, &humidity))
 		{
 			printf("%.1f;%.1f", temperature, humidity);
 			break;
