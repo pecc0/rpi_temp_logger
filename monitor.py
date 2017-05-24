@@ -38,7 +38,9 @@ def display_data():
     db = connect()
     curs = db.cursor()
 
-    for row in curs.execute("SELECT * FROM temps"):
+    curs.execute("SELECT * FROM temps")
+
+    for row in curs.fetchall():
         print str(row[0])+"	"+str(row[1])+"	"+str(row[2])
 
     db.close()
