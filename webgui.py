@@ -82,8 +82,8 @@ def print_graph_script(table):
         var options = {
           title: 'Temperature',
           series: {
-            0: { color: '#43459d' },
-            1: { color: '#e2431e' }
+            0: { color: '#e2431e' },
+            1: { color: '#43459d' }
           } 
         };
 
