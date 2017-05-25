@@ -10,10 +10,8 @@ import subprocess
 import temps_db
 
 # global variables
-#speriod=(15*60)-1
+# speriod=(15*60)-1
 speriod=1
-
-
 
 
 # store the temperature in the database
@@ -58,8 +56,11 @@ def get_temp(temp_reader_path):
 
 def main():
 
+    dir_path = os.path.dirname(os.path.realpath(__file__))
+    temp_reader_path = dir_path + '/temperature_reader'
+
     while True:
-        resp = get_temp('./temperature_reader')
+        resp = get_temp(temp_reader_path)
         if resp:
             temperature, humidity = resp
 
