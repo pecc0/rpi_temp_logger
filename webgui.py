@@ -80,7 +80,11 @@ def print_graph_script(table):
         ]);
 
         var options = {
-          title: 'Temperature'
+          title: 'Temperature',
+          series: {
+            0: { color: '#43459d' },
+            1: { color: '#e2431e' }
+          } 
         };
 
         var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
@@ -139,7 +143,8 @@ def show_stats(option):
     print "<table>"
     print "<tr><td><strong>Date/Time</strong></td><td><strong>Temperature</strong></td></tr>"
 
-    rows=curs.execute("SELECT * FROM temps WHERE measure_time>TIMESTAMPADD(HOUR, -1, CURRENT_TIMESTAMP)")
+    curs.execute("SELECT * FROM temps WHERE measure_time>TIMESTAMPADD(HOUR, -1, CURRENT_TIMESTAMP)")
+    rows=curs.fetchall()
     for row in rows:
         rowstr="<tr><td>{0}&emsp;&emsp;</td><td>{1}C</td></tr>".format(str(row[0]),str(row[1]))
         print rowstr
