@@ -8,6 +8,7 @@ import sys
 import glob
 import subprocess
 import temps_db
+import syslog
 
 # global variables
 # speriod=(15*60)-1
@@ -59,6 +60,8 @@ def main():
     dir_path = os.path.dirname(os.path.realpath(__file__))
     temp_reader_path = dir_path + '/temperature_reader'
 
+    syslog.syslog(syslog.LOG_INFO, "Temperature monitor started")
+
     while True:
         resp = get_temp(temp_reader_path)
         if resp:
@@ -66,7 +69,10 @@ def main():
 
             print "t=" + str(temperature) + " h=" + str(humidity)
 
-            log_temperature(temperature, humidity)
+            try:
+                log_temperature(temperature, humidity)
+            except Exception:
+                syslog.syslog(syslog.LOG_ERR, "Error storing data")
 
         time.sleep(speriod)
 
