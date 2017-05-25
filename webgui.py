@@ -1,14 +1,10 @@
 #!/usr/bin/env python
 
-import sqlite3
+import MySQLdb
 import sys
 import cgi
 import cgitb
-
-
-# global variables
-speriod=(15*60)-1
-dbname='/var/www/templog.db'
+import temps_db
 
 
 
@@ -36,14 +32,14 @@ def printHTMLHead(title, table):
 # return a list of records from the database
 def get_data(interval):
 
-    conn=sqlite3.connect(dbname)
+    conn=temps_db.connect()
     curs=conn.cursor()
 
-    if interval == None:
+    if interval is None:
         curs.execute("SELECT * FROM temps")
     else:
-#        curs.execute("SELECT * FROM temps WHERE timestamp>datetime('now','-%s hours')" % interval)
-        curs.execute("SELECT * FROM temps WHERE timestamp>datetime('2013-09-19 21:30:02','-%s hours') AND timestamp<=datetime('2013-09-19 21:31:02')" % interval)
+        curs.execute("SELECT * FROM temps WHERE measure_time>TIMESTAMPADD(HOUR, -%d, CURRENT_TIMESTAMP)" % interval)
+        #curs.execute("SELECT * FROM temps WHERE timestamp>datetime('2013-09-19 21:30:02','-%s hours') AND timestamp<=datetime('2013-09-19 21:31:02')" % interval)
 
     rows=curs.fetchall()
 
@@ -57,11 +53,11 @@ def create_table(rows):
     chart_table=""
 
     for row in rows[:-1]:
-        rowstr="['{0}', {1}],\n".format(str(row[0]),str(row[1]))
+        rowstr="['{0}', {1}, {2}],\n".format(str(row[0]),str(row[1]),str(row[2]))
         chart_table+=rowstr
 
     row=rows[-1]
-    rowstr="['{0}', {1}]\n".format(str(row[0]),str(row[1]))
+    rowstr="['{0}', {1}, {2}]\n".format(str(row[0]),str(row[1]),str(row[2]))
     chart_table+=rowstr
 
     return chart_table
@@ -79,7 +75,7 @@ def print_graph_script(table):
       google.setOnLoadCallback(drawChart);
       function drawChart() {
         var data = google.visualization.arrayToDataTable([
-          ['Time', 'Temperature'],
+          ['Time', 'Temperature', 'Humidity'],
 %s
         ]);
 
@@ -108,24 +104,22 @@ def show_graph():
 # argument option is the number of hours
 def show_stats(option):
 
-    conn=sqlite3.connect(dbname)
+    conn=temps_db.connect()
     curs=conn.cursor()
 
     if option is None:
         option = str(24)
 
-#    curs.execute("SELECT timestamp,max(temp) FROM temps WHERE timestamp>datetime('now','-%s hour') AND timestamp<=datetime('now')" % option)
-    curs.execute("SELECT timestamp,max(temp) FROM temps WHERE timestamp>datetime('2013-09-19 21:30:02','-%s hour') AND timestamp<=datetime('2013-09-19 21:31:02')" % option)
+    curs.execute("SELECT measure_time,max(temperature) FROM temps WHERE measure_time>TIMESTAMPADD(HOUR, -%d, CURRENT_TIMESTAMP)" % option)
+    #curs.execute("SELECT timestamp,max(temp) FROM temps WHERE timestamp>datetime('2013-09-19 21:30:02','-%s hour') AND timestamp<=datetime('2013-09-19 21:31:02')" % option)
     rowmax=curs.fetchone()
     rowstrmax="{0}&nbsp&nbsp&nbsp{1}C".format(str(rowmax[0]),str(rowmax[1]))
 
-#    curs.execute("SELECT timestamp,min(temp) FROM temps WHERE timestamp>datetime('now','-%s hour') AND timestamp<=datetime('now')" % option)
-    curs.execute("SELECT timestamp,min(temp) FROM temps WHERE timestamp>datetime('2013-09-19 21:30:02','-%s hour') AND timestamp<=datetime('2013-09-19 21:31:02')" % option)
+    curs.execute("SELECT measure_time,min(temperature) FROM temps WHERE measure_time>TIMESTAMPADD(HOUR, -%d, CURRENT_TIMESTAMP)" % option)
     rowmin=curs.fetchone()
     rowstrmin="{0}&nbsp&nbsp&nbsp{1}C".format(str(rowmin[0]),str(rowmin[1]))
 
-#    curs.execute("SELECT avg(temp) FROM temps WHERE timestamp>datetime('now','-%s hour') AND timestamp<=datetime('now')" % option)
-    curs.execute("SELECT avg(temp) FROM temps WHERE timestamp>datetime('2013-09-19 21:30:02','-%s hour') AND timestamp<=datetime('2013-09-19 21:31:02')" % option)
+    curs.execute("SELECT avg(temperature) FROM temps WHERE measure_time>TIMESTAMPADD(HOUR, -%d, CURRENT_TIMESTAMP)" % option)
     rowavg=curs.fetchone()
 
 
@@ -145,8 +139,7 @@ def show_stats(option):
     print "<table>"
     print "<tr><td><strong>Date/Time</strong></td><td><strong>Temperature</strong></td></tr>"
 
-#    rows=curs.execute("SELECT * FROM temps WHERE timestamp>datetime('new','-1 hour') AND timestamp<=datetime('new')")
-    rows=curs.execute("SELECT * FROM temps WHERE timestamp>datetime('2013-09-19 21:30:02','-1 hour') AND timestamp<=datetime('2013-09-19 21:31:02')")
+    rows=curs.execute("SELECT * FROM temps WHERE measure_time>TIMESTAMPADD(HOUR, -1, CURRENT_TIMESTAMP)")
     for row in rows:
         rowstr="<tr><td>{0}&emsp;&emsp;</td><td>{1}C</td></tr>".format(str(row[0]),str(row[1]))
         print rowstr

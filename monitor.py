@@ -7,21 +7,18 @@ import time
 import sys
 import glob
 import subprocess
+import temps_db
 
 # global variables
 #speriod=(15*60)-1
 speriod=1
 
-def connect():
-    return MySQLdb.connect(host="localhost",    # your host, usually localhost
-                           user="zmuser",         # your username
-                           passwd="zmpass",  # your password
-                           db="temperatures")        # name of the data base
+
 
 
 # store the temperature in the database
 def log_temperature(temp, humidity):
-    db = connect()
+    db = temps_db.connect()
 
     curs = db.cursor()
     data = (temp, humidity)
@@ -37,7 +34,7 @@ def log_temperature(temp, humidity):
 # display the contents of the database
 def display_data():
 
-    db = connect()
+    db = temps_db.connect()
     curs = db.cursor()
 
     curs.execute("SELECT * FROM temps")
