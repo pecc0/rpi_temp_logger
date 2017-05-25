@@ -193,7 +193,7 @@ def validate_input(option_str):
     if option_str.isalnum():
         # check that the option is within a specific range
         if int(option_str) > 0 and int(option_str) <= 24:
-            return option_str
+            return int(option_str)
         else:
             return None
     else: 
@@ -222,13 +222,13 @@ def main():
     option=get_option()
 
     if option is None:
-        option = str(24)
-
-    # get data from the database
-    records=get_data(option)
+        option = 24
 
     # print the HTTP header
     printHTTPheader()
+
+    # get data from the database
+    records=get_data(option)
 
     if len(records) != 0:
         # convert the data into a table
