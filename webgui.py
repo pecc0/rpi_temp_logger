@@ -166,6 +166,11 @@ def print_time_selector(option):
 
     if option is not None:
 
+        if option == "1":
+            print "<option value=\"1\" selected=\"selected\">the last 1 hour</option>"
+        else:
+            print "<option value=\"1\">the last 1 hour</option>"
+
         if option == "6":
             print "<option value=\"6\" selected=\"selected\">the last 6 hours</option>"
         else:
