@@ -63,7 +63,7 @@ def main():
     dir_path = os.path.dirname(os.path.realpath(__file__))
     temp_reader_path = dir_path + '/temperature_reader'
 
-    syslog.syslog(syslog.LOG_INFO, "Temperature monitor started")
+    syslog.syslog(syslog.LOG_INFO, "Temperature monitor started. Delay " + str(speriod))
 
     while True:
         resp = get_temp(temp_reader_path)
