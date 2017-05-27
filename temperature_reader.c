@@ -52,7 +52,7 @@ int read_dht11_dat(float* temperature, float* humidity)
 	}
  
 	if ( (j >= 40) &&
-	     (dht11_dat[4] == ( (dht11_dat[0] + dht11_dat[1] + dht11_dat[2] + dht11_dat[3]) & 0xFF) ) )
+		(dht11_dat[4] == ( (dht11_dat[0] + dht11_dat[1] + dht11_dat[2] + dht11_dat[3]) & 0xFF) ) )
 	{
 		f = dht11_dat[2] * 9. / 5. + 32;
 		syslog(LOG_INFO, "Humidity = %d.%d %% Temperature = %d.%d C (%.1f F)",
@@ -60,6 +60,10 @@ int read_dht11_dat(float* temperature, float* humidity)
 			
 		//printf( "Humidity = %d.%d %% Temperature = %d.%d C (%.1f F)\n",
 		//	dht11_dat[0], dht11_dat[1], dht11_dat[2], dht11_dat[3], f );
+		if (dht11_dat[2] > 100)
+		{
+			return 0;
+		}
 		*temperature = dht11_dat[2];
 		*humidity = dht11_dat[0];
 		return 1;
