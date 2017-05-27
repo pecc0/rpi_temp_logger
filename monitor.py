@@ -13,11 +13,9 @@ import syslog
 # global variables
 # speriod=(15*60)-1
 
-speriod = sys.argv[1]
-if speriod is None:
-    speriod = 1
-else:
-    speriod = int(speriod)
+speriod = 1
+if len(sys.argv) >= 2:
+    speriod = int(sys.argv[1])
 
 
 # store the temperature in the database
